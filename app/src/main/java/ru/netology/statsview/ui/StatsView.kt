@@ -59,6 +59,13 @@ class StatsView @JvmOverloads constructor(
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
     }
+    private val circlePaint = Paint(
+        Paint.ANTI_ALIAS_FLAG
+    ).apply {
+        color = 0xFFF8F7F3.toInt()
+        style = Paint.Style.STROKE
+        strokeWidth = this@StatsView.lineWidth
+    }
     private val textPaint = Paint(
         Paint.ANTI_ALIAS_FLAG
     ).apply {
@@ -86,11 +93,13 @@ class StatsView @JvmOverloads constructor(
         }
 
         //convert to percent
-        val dataSum = data.sum()
+        //val dataSum = data.sum()
         val percentData: MutableList<Float> = ArrayList()
         data.forEachIndexed { index, datum ->
-            percentData.add(index, datum / dataSum )
+            percentData.add(index, datum / 100 )
         }
+        println(percentData)
+        canvas.drawCircle(center.x, center.y, radius, circlePaint)
 
         var startAngle = -90F
         percentData.forEachIndexed { index, datum ->
