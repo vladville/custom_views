@@ -10,6 +10,7 @@ import android.view.View
 import androidx.core.content.withStyledAttributes
 import ru.netology.statsview.R
 import ru.netology.statsview.utils.AndroidUtils
+import java.util.Collections.emptyList
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -84,16 +85,27 @@ class StatsView @JvmOverloads constructor(
             return
         }
 
-        var startAngle = -90F
+        //convert to percent
+        val dataSum = data.sum()
+        val percentData: MutableList<Float> = ArrayList()
         data.forEachIndexed { index, datum ->
+            percentData.add(index, datum / dataSum )
+        }
+
+        var startAngle = -90F
+        percentData.forEachIndexed { index, datum ->
             val angle = datum * 360F
             paint.color = colors.getOrElse(index) { generateRandomColor() }
             canvas.drawArc(oval, startAngle, angle, false, paint)
             startAngle += angle
         }
 
+        //add point for round
+        paint.color = colors.getOrNull(0) ?: generateRandomColor()
+        canvas.drawPoint(center.x, center.y - radius, paint)
+
         canvas.drawText(
-            "%.2f%%".format(data.sum() * 100),
+            "%.2f%%".format(percentData.sum() * 100),
             center.x,
             center.y + textPaint.textSize / 4,
             textPaint
