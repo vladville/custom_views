@@ -98,7 +98,6 @@ class StatsView @JvmOverloads constructor(
         data.forEachIndexed { index, datum ->
             percentData.add(index, datum / 100 )
         }
-        println(percentData)
         canvas.drawCircle(center.x, center.y, radius, circlePaint)
 
         var startAngle = -90F
