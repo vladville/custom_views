@@ -16,6 +16,7 @@
         app:color2="#19d8c4"
         app:color3="#fddb3b"
         app:color4="#fa1e68"
+        app:fillEffect="parallel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

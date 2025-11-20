@@ -27,10 +27,10 @@ class MainActivity : AppCompatActivity() {
 
         val view = findViewById<StatsView>(R.id.statsView)
         view.data = listOf(
-            25F,
-            25F,
-            25F,
-            25F,
+            15F,
+            20F,
+            10F,
+            55F,
         )
     }
 }

@@ -37,6 +37,8 @@ class StatsView @JvmOverloads constructor(
     private var lineWidth = AndroidUtils.dp(context, 5).toFloat()
     private var colors = emptyList<Int>()
 
+    private var fillEffect: Int = 0
+
     init {
         context.withStyledAttributes(attributeSet, R.styleable.StatsView) {
             textSize = getDimension(R.styleable.StatsView_textSize, textSize)
@@ -47,6 +49,7 @@ class StatsView @JvmOverloads constructor(
                 getColor(R.styleable.StatsView_color3, generateRandomColor()),
                 getColor(R.styleable.StatsView_color4, generateRandomColor()),
             )
+            fillEffect = getInteger(R.styleable.StatsView_fillEffect, fillEffect)
         }
     }
 
@@ -99,30 +102,62 @@ class StatsView @JvmOverloads constructor(
             return
         }
 
-        canvas.save()
-        canvas.rotate(rotationAngle, center.x, center.y)
-
         canvas.drawCircle(center.x, center.y, radius, circlePaint)
 
-        var startAngle = -90F
-        data.forEachIndexed { index, datum ->
-            val angle = (datum / 100) * 360F
-            paint.color = colors.getOrElse(index) { generateRandomColor() }
-            canvas.drawArc(oval, startAngle, angle * progress, false, paint)
-            startAngle += angle
-        }
-
-        //add point for round
-        paint.color = colors.getOrNull(0) ?: generateRandomColor()
-        canvas.drawPoint(center.x, center.y - radius, paint)
-        canvas.restore()
-
         canvas.drawText(
-            "%.2f%%".format(data.sum()/100 * 100),
+            "%.2f%%".format(data.sum() / 100 * 100),
             center.x,
             center.y + textPaint.textSize / 4,
             textPaint
         )
+
+        var startAngle = -90F
+        var filled = 0F
+        val progressAngel = progress * 360F
+        when (fillEffect) {
+            0 -> {
+                data.forEachIndexed { index, datum ->
+                    val angle = (datum / 100) * 360F
+                    paint.color = colors.getOrElse(index) { generateRandomColor() }
+                    canvas.drawArc(oval, startAngle, angle * progress, false, paint)
+                    startAngle += angle
+
+                }.also {
+                    //add point for round
+                    paint.color = colors.getOrNull(0) ?: generateRandomColor()
+                    canvas.drawArc(oval, startAngle, -1F, false, paint)
+                }
+            }
+
+            1 -> {
+                data.forEachIndexed { index, datum ->
+                    val angle = (datum / 100) * 360F
+                    paint.color = colors.getOrNull(index) ?: generateRandomColor()
+                    canvas.drawArc(oval, startAngle, progressAngel - filled, false, paint)
+                    startAngle += angle
+                    filled += angle
+                    if (filled > progressAngel) return
+
+                }.also {
+                    //add point for round
+                    paint.color = colors.getOrNull(0) ?: generateRandomColor()
+                    canvas.drawArc(oval, startAngle, -1F, false, paint)
+                }
+            }
+            2-> {
+                data.forEachIndexed { index, datum ->
+                    val angle = (datum / 100) * 360F
+                    paint.color = colors.getOrElse(index) { generateRandomColor() }
+                    canvas.drawArc(oval, startAngle + 360F * progress, angle * progress, false, paint) //with rotate
+                    startAngle += angle
+
+                }.also {
+                    //add point for round
+                    paint.color = colors.getOrNull(0) ?: generateRandomColor()
+                    canvas.drawArc(oval, startAngle + 360 * progress, -1F, false, paint) //with rotate
+                }
+            }
+        }
     }
 
     private fun update() {
