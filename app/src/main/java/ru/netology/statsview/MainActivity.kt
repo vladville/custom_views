@@ -1,8 +1,12 @@
 package ru.netology.statsview
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.os.Bundle
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -27,26 +31,6 @@ class MainActivity : AppCompatActivity() {
             25F,
             25F,
             25F,
-        )
-
-        val textView = findViewById<TextView>(R.id.label)
-
-        view.startAnimation(
-            AnimationUtils.loadAnimation(this, R.anim.animation).apply {
-                setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationEnd(p0: Animation?) {
-                        textView.text = "onAnimationEnd"
-                    }
-
-                    override fun onAnimationRepeat(p0: Animation?) {
-                        textView.text = "onAnimationRepeat"
-                    }
-
-                    override fun onAnimationStart(p0: Animation?) {
-                        textView.text = "onAnimationStart"
-                    }
-                })
-            }
         )
     }
 }
