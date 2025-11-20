@@ -121,9 +121,7 @@ class StatsView @JvmOverloads constructor(
                     paint.color = colors.getOrElse(index) { generateRandomColor() }
                     canvas.drawArc(oval, startAngle, angle * progress, false, paint)
                     startAngle += angle
-
                 }.also {
-                    //add point for round
                     paint.color = colors.getOrNull(0) ?: generateRandomColor()
                     canvas.drawArc(oval, startAngle, -1F, false, paint)
                 }
@@ -137,24 +135,37 @@ class StatsView @JvmOverloads constructor(
                     startAngle += angle
                     filled += angle
                     if (filled > progressAngel) return
-
                 }.also {
-                    //add point for round
                     paint.color = colors.getOrNull(0) ?: generateRandomColor()
                     canvas.drawArc(oval, startAngle, -1F, false, paint)
                 }
             }
-            2-> {
+
+            2 -> {
                 data.forEachIndexed { index, datum ->
                     val angle = (datum / 100) * 360F
                     paint.color = colors.getOrElse(index) { generateRandomColor() }
-                    canvas.drawArc(oval, startAngle + 360F * progress, angle * progress, false, paint) //with rotate
+                    canvas.drawArc(oval, startAngle + 360F * progress, angle * progress, false, paint)
                     startAngle += angle
-
                 }.also {
-                    //add point for round
                     paint.color = colors.getOrNull(0) ?: generateRandomColor()
-                    canvas.drawArc(oval, startAngle + 360 * progress, -1F, false, paint) //with rotate
+                    canvas.drawArc(oval, startAngle + 360 * progress, -1F, false, paint)
+                }
+            }
+
+            3 -> {
+                var startAngle = -90F
+                data.forEachIndexed { index, datum ->
+                    val angle = (datum / 100) * 360F
+                    paint.color = colors.getOrElse(index) { generateRandomColor() }
+                    val offset = (angle - (angle * progress)) / 2
+                    canvas.drawArc(oval, startAngle + offset, angle * progress, false, paint)
+                    startAngle += angle
+                }.also {
+                    paint.color = colors.getOrNull(0) ?: generateRandomColor()
+                    val angle = ((data.getOrNull(0) ?: 25).toFloat() / 100) * 360F
+
+                    canvas.drawArc(oval, startAngle + (angle - (angle * progress)) / 2, -1F, false, paint)
                 }
             }
         }
